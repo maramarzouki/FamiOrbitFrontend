@@ -32,7 +32,9 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-assets/cfg/config.json
+
+# ignore exactly this file at repo root/assets/cfg/config.json
+/assets/cfg/config.json
 
 # Symbolication related
 app.*.symbols
