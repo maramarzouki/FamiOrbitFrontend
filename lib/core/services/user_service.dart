@@ -27,9 +27,9 @@ class UserService {
         return "User registered successfully";
       } else {
         debugPrint(
-          "error while registring (statusCode != 201) : ${data['ERROR creating account:']}",
+          "error while registring (statusCode != 201) : ${data['error']}",
         );
-        throw Exception(data['ERROR creating account:'] ?? 'Registration failed!');
+        throw Exception(data['error'] ?? 'Registration failed!');
       }
     } catch (e) {
       debugPrint(e.toString());

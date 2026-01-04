@@ -101,11 +101,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: screenHeight * 0.04,),
+            SizedBox(height: screenHeight * 0.04),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: screenHeight * 0.01),
               child: Form(
                 key: _registerFormKey,
+                onChanged: () => setState(() {
+                  errorMessage = '';
+                }),
                 child: Column(
                   spacing: screenHeight * 0.02,
                   children: [
