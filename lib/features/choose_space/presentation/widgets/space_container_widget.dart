@@ -32,7 +32,7 @@ class SpaceContainerWidget extends StatelessWidget {
         width: screenWidth * 0.5,
         decoration: BoxDecoration(
           border: isSelected
-              ? Border.all(color: Color(0xff489fb5), width: screenWidth * 0.003)
+              ? Border.all(color: Theme.of(context).primaryColor, width: screenWidth * 0.003)
               : null,
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -47,14 +47,23 @@ class SpaceContainerWidget extends StatelessWidget {
         child: Column(
           spacing: screenHeight * 0.02,
           children: [
-            SizedBox(
-              height: 110,
-              width: 110,
-              child: Image.asset(
-                'assets/images/parents.png',
-                fit: BoxFit.contain,
-              ),
-            ),
+            type == "Parent"
+                ? SizedBox(
+                    height: 110,
+                    width: 110,
+                    child: Image.asset(
+                      'assets/images/parents.png',
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : SizedBox(
+                    height: 105,
+                    width: 105,
+                    child: Image.asset(
+                      'assets/images/child.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
             Text("$type Space"),
           ],
         ),

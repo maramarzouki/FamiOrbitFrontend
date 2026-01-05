@@ -5,7 +5,7 @@ import 'package:fami_orbit/core/validators/validators.dart';
 import 'package:fami_orbit/core/widgets/custom_button.dart';
 import 'package:fami_orbit/core/widgets/custom_input.dart';
 import 'package:fami_orbit/features/auth/data/model/user.dart';
-import 'package:fami_orbit/features/user_space/presentation/screens/choose_user_space_screen.dart';
+import 'package:fami_orbit/features/choose_space/presentation/screens/choose_user_space_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
