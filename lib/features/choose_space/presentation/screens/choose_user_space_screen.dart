@@ -1,6 +1,8 @@
 import 'package:fami_orbit/core/utils/screen_utils.dart';
 import 'package:fami_orbit/core/widgets/custom_button.dart';
+import 'package:fami_orbit/features/choose_space/presentation/screens/child_space_homescreen.dart';
 import 'package:fami_orbit/features/choose_space/presentation/widgets/space_container_widget.dart';
+import 'package:fami_orbit/features/parent_space/presentation/screens/parent_space_homescreen.dart';
 import 'package:flutter/material.dart';
 
 class ChooseUserSpaceScreen extends StatefulWidget {
@@ -46,7 +48,19 @@ class _ChooseUserSpaceScreenState extends State<ChooseUserSpaceScreen> {
             CustomButton(
               width: screenWidth * 0.5,
               height: screenHeight * 0.05,
-              onPressed: () {},
+              onPressed: () {
+                if (selectedSpace == "Parent") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ParentSpaceHomescreen()),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ChildSpaceHomescreen()),
+                  );
+                }
+              },
               text: "Next",
               color: Theme.of(context).primaryColor,
             ),

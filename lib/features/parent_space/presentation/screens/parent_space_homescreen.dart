@@ -12,11 +12,22 @@ class ParentSpaceHomescreen extends StatelessWidget {
     final screenHeight = ScreenUtils.getScreenHeight();
 
     return Scaffold(
-      body: Column(
-        children: [
-          ChildCard(),
-          CustomButton(width: screenWidth * 0.5, height: screenHeight * 0.04, onPressed: (){}, text: "New child space",)
-        ],
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.05),
+          child: Column(
+            spacing: screenHeight * 0.02,
+            children: [
+              ChildCard(),
+              CustomButton(
+                width: screenWidth * 0.45,
+                height: screenHeight * 0.045,
+                onPressed: () {},
+                text: "New child space",
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
