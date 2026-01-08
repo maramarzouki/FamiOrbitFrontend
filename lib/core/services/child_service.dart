@@ -38,4 +38,27 @@ class ChildService {
     }
   }
 
+  static Future<List<Child>> getAllChildren(parentID) async {
+    try {
+      var url = Uri.parse('$baseUrl/getAllChildren/$parentID');
+      final response = await http.get(
+        url,
+        headers: {'content-type': 'application/json'},
+      );
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      debugPrint('children list response data $data');
+      if (response.statusCode == 200) {
+        final List childrenList = data['childrenList'];
+        return childrenList.map((item) => Child.fromJson(item)).toList();
+      } else {
+        debugPrint(
+          "error while getting children list (statusCode != 200) : ${data['error']}",
+        );
+        throw Exception(data['error'] ?? 'Getting children list failed!');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
 }

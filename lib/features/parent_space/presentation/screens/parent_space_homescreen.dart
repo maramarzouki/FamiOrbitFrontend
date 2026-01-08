@@ -1,4 +1,5 @@
 import 'package:fami_orbit/core/models/child.dart';
+import 'package:fami_orbit/core/services/auth_service.dart';
 import 'package:fami_orbit/core/services/child_service.dart';
 import 'package:fami_orbit/core/utils/screen_utils.dart';
 import 'package:fami_orbit/core/validators/validators.dart';
@@ -22,25 +23,46 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
   final _validators = Validators();
   String errorMessage = "";
 
+  String parentID = "";
+  List<Child> childrenList = [];
 
-  Future<void> addChild() async {
+  @override
+  void initState() {
+    super.initState();
+    getChildrenList();
+  }
+
+  Future<void> addChild(StateSetter setDialogState) async {
+    parentID = await AuthService.instance.userId;
     Child child = Child(
-      childUsername: "",
-      parentID: 0,
+      childUsername: childUsernameController.text,
+      parentID: parentID,
     );
+    debugPrint("$child");
     if (_addChildFormKey.currentState!.validate()) {
       try {
         final result = await ChildService.addChild(child);
-        debugPrint("Signup Success: $result");
+        debugPrint("add child Success: $result");
         Navigator.pop(context);
       } catch (e) {
         final errorMsg = e.toString().replaceAll('Exception: ', '');
-        setState(() {
+        setDialogState(() {
           errorMessage = errorMsg;
         });
         debugPrint("Error: ${e.toString()}");
+        debugPrint("errorMessage $errorMessage");
       }
     }
+  }
+
+  Future<void> getChildrenList() async {
+    parentID = await AuthService.instance.userId;
+    final chList = await ChildService.getAllChildren(parentID);
+    if(!mounted) return;
+    setState(() {
+      childrenList = chList;
+    });
+    debugPrint('children list $childrenList');
   }
 
   @override
@@ -48,41 +70,55 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
     final screenWidth = ScreenUtils.getScreenWidth();
     final screenHeight = ScreenUtils.getScreenHeight();
 
-
     void openAddChildDialog() {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-            child: Container(
-              padding: EdgeInsets.all(screenWidth * 0.07),
-              child: Form(
-                key: _addChildFormKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: screenHeight * 0.02,
-                  children: [
-                    Text(
-                      "Type child name",
-                      style: TextStyle(fontSize: screenWidth * 0.05),
-                    ),
-                    CustomInput(
-                      label: "Name",
-                      controller: TextEditingController(),
-                      maxLines: 1,
-                      textInputType: TextInputType.text,
-                      validator: _validators.defaultValidation,
-                    ),
-                    CustomButton(
-                      width: double.infinity,
-                      height: screenHeight * 0.05,
-                      text: "Add",
-                      onPressed: addChild,
-                    ),
-                  ],
-                ),
-              ),
+            child: StatefulBuilder(
+              builder:
+                  (BuildContext dialogContext, StateSetter setDialogState) {
+                    return Container(
+                      padding: EdgeInsets.all(screenWidth * 0.07),
+                      child: Form(
+                        key: _addChildFormKey,
+                        onChanged: () => setDialogState(() {
+                          errorMessage = '';
+                        }),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: screenHeight * 0.02,
+                          children: [
+                            Text(
+                              "Type child name",
+                              style: TextStyle(fontSize: screenWidth * 0.05),
+                            ),
+                            CustomInput(
+                              label: "Name",
+                              controller: childUsernameController,
+                              maxLines: 1,
+                              textInputType: TextInputType.text,
+                              validator: _validators.defaultValidation,
+                            ),
+                            if (errorMessage.isNotEmpty)
+                              Text(
+                                errorMessage,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            CustomButton(
+                              width: double.infinity,
+                              height: screenHeight * 0.05,
+                              text: "Add",
+                              onPressed: () async {
+                                await addChild(setDialogState);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
             ),
           );
         },

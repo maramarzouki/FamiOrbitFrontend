@@ -64,7 +64,7 @@ class UserService {
           throw Exception("Server response is missing token!");
         }
         debugPrint("$data");
-        return "Loging successfull";
+        return data['token'];
       } else {
         throw Exception(data['loginError'] ?? 'Unknown error occurred');
       }

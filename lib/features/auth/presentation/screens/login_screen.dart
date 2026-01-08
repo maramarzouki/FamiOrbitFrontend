@@ -1,4 +1,5 @@
 import 'package:fami_orbit/core/providers/modal_state_provider.dart';
+import 'package:fami_orbit/core/services/auth_service.dart';
 import 'package:fami_orbit/core/services/user_service.dart';
 import 'package:fami_orbit/core/utils/screen_utils.dart';
 import 'package:fami_orbit/core/validators/validators.dart';
@@ -34,6 +35,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_loginFormKey.currentState!.validate()) {
       try {
         final result = await UserService.login(user);
+        debugPrint('login res: $result');
+        await AuthService.instance.saveToken(result);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ChooseUserSpaceScreen()),
