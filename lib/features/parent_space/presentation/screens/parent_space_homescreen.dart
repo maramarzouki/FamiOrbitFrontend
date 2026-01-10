@@ -5,6 +5,7 @@ import 'package:fami_orbit/core/utils/screen_utils.dart';
 import 'package:fami_orbit/core/validators/validators.dart';
 import 'package:fami_orbit/core/widgets/custom_button.dart';
 import 'package:fami_orbit/core/widgets/custom_input.dart';
+import 'package:fami_orbit/core/widgets/custom_list_view.dart';
 import 'package:fami_orbit/features/parent_space/presentation/widgets/child_card.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +59,7 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
   Future<void> getChildrenList() async {
     parentID = await AuthService.instance.userId;
     final chList = await ChildService.getAllChildren(parentID);
-    if(!mounted) return;
+    if (!mounted) return;
     setState(() {
       childrenList = chList;
     });
@@ -125,6 +126,42 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
       );
     }
 
+    void openAddNewNumber() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              padding: EdgeInsets.all(screenWidth * 0.07),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: screenHeight * 0.02,
+                children: [
+                  Text(
+                    "Type the new phone number",
+                    style: TextStyle(fontSize: screenWidth * 0.05),
+                  ),
+                  CustomInput(
+                    label: "Phone number",
+                    controller: TextEditingController(),
+                    maxLines: 1,
+                    textInputType: TextInputType.number,
+                  ),
+                  CustomButton(
+                    width: double.infinity,
+                    height: screenHeight * 0.05,
+                    text: "Add",
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -132,7 +169,34 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
           child: Column(
             spacing: screenHeight * 0.02,
             children: [
-              ChildCard(),
+              childrenList.isNotEmpty
+                  ? CustomListView(
+                      itemCount: childrenList.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: screenHeight * .02),
+                          child: Row(
+                            spacing: screenWidth * 0.02,
+                            children: [
+                              Expanded(
+                                child: ChildCard(
+                                  name: childrenList[index].childUsername,
+                                  location: "location",
+                                  batteryState: "Full",
+                                ),
+                              ),
+                              CustomButton(
+                                width: screenWidth * 0.12,
+                                height: screenHeight * 0.05,
+                                icon: Icons.local_phone_rounded,
+                                onPressed: () => openAddNewNumber(),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : Text('No children added yet!'),
               CustomButton(
                 width: screenWidth * 0.45,
                 height: screenHeight * 0.045,

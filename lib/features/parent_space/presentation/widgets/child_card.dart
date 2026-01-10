@@ -2,7 +2,15 @@ import 'package:fami_orbit/core/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 class ChildCard extends StatelessWidget {
-  const ChildCard({super.key});
+  final String name;
+  final String location;
+  final String batteryState;
+  const ChildCard({
+    super.key,
+    required this.name,
+    required this.location,
+    required this.batteryState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +36,22 @@ class ChildCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Child name"),
-          Row(children: [
-            Icon(Icons.pin_drop_rounded, size: screenWidth * 0.05,), 
-            Text("Location")
-          ],),
+          Text(name),
           Row(
             children: [
-              Icon(Icons.battery_charging_full_rounded, size: screenWidth * 0.05,),
-              Text("Full")
+              Icon(Icons.pin_drop_rounded, size: screenWidth * 0.05),
+              Text(location),
             ],
-          )
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.battery_charging_full_rounded,
+                size: screenWidth * 0.05,
+              ),
+              Text(batteryState),
+            ],
+          ),
         ],
       ),
     );

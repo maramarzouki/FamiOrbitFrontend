@@ -49,7 +49,7 @@ class ChildService {
       debugPrint('children list response data $data');
       if (response.statusCode == 200) {
         final List childrenList = data['childrenList'];
-        return childrenList.map((item) => Child.fromJson(item)).toList();
+        return childrenList.map((item) => Child.fromMap(item as Map<String, dynamic>)).toList();
       } else {
         debugPrint(
           "error while getting children list (statusCode != 200) : ${data['error']}",
@@ -61,4 +61,5 @@ class ChildService {
       rethrow;
     }
   }
+
 }
