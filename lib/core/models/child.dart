@@ -1,10 +1,28 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+class Phone {
+  String number;
+  bool verified;
+  DateTime? addedAt;
+
+  Phone({required this.number, this.verified = false, this.addedAt});
+
+  factory Phone.fromMap(Map<String, dynamic> map) {
+    return Phone(
+      number: map['number'] as String,
+      verified: map['verified'] as bool,
+      addedAt: map['addedAt'] != null
+          ? DateTime.parse(map['addedAt'] as String)
+          : null,
+    );
+  }
+}
+
 class Child {
   String? id;
   String childUsername;
-  List<int>? trustedContacts;
+  List<Phone>? trustedContacts;
   List<String>? safePlaces;
   String parentID;
 
@@ -31,7 +49,9 @@ class Child {
       id: map['_id'] != null ? map['_id'] as String : null,
       childUsername: map['childUsername'] as String,
       trustedContacts: map['trustedContacts'] != null
-          ? List<int>.from((map['trustedContacts'] as List<dynamic>))
+          ? (map['trustedContacts'] as List<dynamic>)
+                .map((item) => Phone.fromMap(item as Map<String, dynamic>))
+                .toList()
           : null,
       safePlaces: map['safePlaces'] != null
           ? List<String>.from((map['safePlaces'] as List<dynamic>))
@@ -48,7 +68,7 @@ class Child {
   Child copyWith({
     String? id,
     String? childUsername,
-    List<int>? trustedContacts,
+    List<Phone>? trustedContacts,
     List<String>? safePlaces,
     String? parentID,
   }) {

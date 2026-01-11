@@ -18,8 +18,10 @@ class ParentSpaceHomescreen extends StatefulWidget {
 
 class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
   final _addChildFormKey = GlobalKey<FormState>();
+  final _addPhoneNumberFormKey = GlobalKey<FormState>();
 
   final TextEditingController childUsernameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
 
   final _validators = Validators();
   String errorMessage = "";
@@ -64,6 +66,27 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
       childrenList = chList;
     });
     debugPrint('children list $childrenList');
+  }
+
+  Future<void> addPhoneNumber(
+    StateSetter setDialogState,
+    childID,
+    phoneNumber,
+  ) async {
+    if (_addPhoneNumberFormKey.currentState!.validate()) {
+      try {
+        final result = await ChildService.addPhoneNumber(childID, phoneNumber);
+        debugPrint("add child Success: $result");
+        Navigator.pop(context);
+      } catch (e) {
+        final errorMsg = e.toString().replaceAll('Exception: ', '');
+        setDialogState(() {
+          errorMessage = errorMsg;
+        });
+        debugPrint("Error: ${e.toString()}");
+        debugPrint("errorMessage $errorMessage");
+      }
+    }
   }
 
   @override
@@ -126,36 +149,54 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
       );
     }
 
-    void openAddNewNumber() {
+    void openAddNewNumber(childID) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-            child: Container(
-              padding: EdgeInsets.all(screenWidth * 0.07),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: screenHeight * 0.02,
-                children: [
-                  Text(
-                    "Type the new phone number",
-                    style: TextStyle(fontSize: screenWidth * 0.05),
-                  ),
-                  CustomInput(
-                    label: "Phone number",
-                    controller: TextEditingController(),
-                    maxLines: 1,
-                    textInputType: TextInputType.number,
-                  ),
-                  CustomButton(
-                    width: double.infinity,
-                    height: screenHeight * 0.05,
-                    text: "Add",
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+            child: StatefulBuilder(
+              builder:
+                  (BuildContext dialogContext, StateSetter setDialogState) {
+                    return Container(
+                      padding: EdgeInsets.all(screenWidth * 0.07),
+                      child: Form(
+                        key: _addPhoneNumberFormKey,
+                        onChanged: () => setDialogState(() {
+                          errorMessage = '';
+                        }),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: screenHeight * 0.02,
+                          children: [
+                            Text(
+                              "Type the new phone number",
+                              style: TextStyle(fontSize: screenWidth * 0.05),
+                            ),
+                            CustomInput(
+                              label: "Phone number",
+                              controller: phoneNumberController,
+                              maxLines: 1,
+                              textInputType: TextInputType.number,
+                              validator: _validators.validatePhone,
+                            ),
+                            if (errorMessage.isNotEmpty)
+                              Text(
+                                errorMessage,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            CustomButton(
+                              width: double.infinity,
+                              height: screenHeight * 0.05,
+                              text: "Add",
+                              onPressed: () =>
+                                  addPhoneNumber(setDialogState, childID, phoneNumberController.text),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
             ),
           );
         },
@@ -189,7 +230,7 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                                 width: screenWidth * 0.12,
                                 height: screenHeight * 0.05,
                                 icon: Icons.local_phone_rounded,
-                                onPressed: () => openAddNewNumber(),
+                                onPressed: () => openAddNewNumber(childrenList[index].id),
                               ),
                             ],
                           ),

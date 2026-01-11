@@ -49,7 +49,9 @@ class ChildService {
       debugPrint('children list response data $data');
       if (response.statusCode == 200) {
         final List childrenList = data['childrenList'];
-        return childrenList.map((item) => Child.fromMap(item as Map<String, dynamic>)).toList();
+        return childrenList
+            .map((item) => Child.fromMap(item as Map<String, dynamic>))
+            .toList();
       } else {
         debugPrint(
           "error while getting children list (statusCode != 200) : ${data['error']}",
@@ -62,4 +64,50 @@ class ChildService {
     }
   }
 
+  static Future<String> addPhoneNumber(childID, phoneNumber) async {
+    try {
+      var url = Uri.parse('$baseUrl/addPhoneNumber/$childID');
+      final response = await http.put(
+        url,
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode({'phoneNumber': phoneNumber}),
+      );
+
+      debugPrint('Add phone number response body: ${response.body}');
+
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
+        debugPrint("data['result'] ${data['result']}");
+        return "number added successfully";
+      } else {
+        debugPrint(
+          "error while adding phone number (statusCode != 201) : ${data['error']}",
+        );
+        throw Exception(data['error'] ?? 'Adding phone number failed!');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  static Future<String> verifyPhoneNumber(childID, phoneNumber, otp) async {
+    try {
+      var url = Uri.parse('$baseUrl/verifyPhoneNumber/$childID');
+      final response = await http.put(
+        url,
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode({'phoneNumber': phoneNumber, 'otp': otp}),
+      );
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return data['message'];
+      } else {
+        throw Exception(data['error'] ?? 'Verification failed!');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
