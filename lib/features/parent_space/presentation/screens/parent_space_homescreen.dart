@@ -67,6 +67,52 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
     });
     debugPrint('children list $childrenList');
   }
+  
+  void showOTPDialog(childID, phoneNumber) {
+      final TextEditingController otpController = TextEditingController();
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          child: StatefulBuilder(
+            builder: (dialogContext, setDialogState) {
+              return Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Enter OTP sent to $phoneNumber'),
+                    CustomInput(
+                      label: "OTP",
+                      controller: otpController,
+                      textInputType: TextInputType.number,
+                      maxLines: 1,
+                    ),
+                    CustomButton(
+                      text: "Verify",
+                      onPressed: () async {
+                        try {
+                          await ChildService.verifyPhoneNumber(
+                            childID,
+                            phoneNumber,
+                            otpController.text,
+                          );
+                          Navigator.pop(context);
+                          getChildrenList(); // Refresh
+                        } catch (e) {
+                          // Show error
+                        }
+                      },
+                      width: double.infinity,
+                      height: 45,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
 
   Future<void> addPhoneNumber(
     StateSetter setDialogState,
@@ -78,6 +124,7 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
         final result = await ChildService.addPhoneNumber(childID, phoneNumber);
         debugPrint("add child Success: $result");
         Navigator.pop(context);
+        showOTPDialog(childID, phoneNumber);
       } catch (e) {
         final errorMsg = e.toString().replaceAll('Exception: ', '');
         setDialogState(() {
@@ -189,8 +236,11 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                               width: double.infinity,
                               height: screenHeight * 0.05,
                               text: "Add",
-                              onPressed: () =>
-                                  addPhoneNumber(setDialogState, childID, phoneNumberController.text),
+                              onPressed: () => addPhoneNumber(
+                                setDialogState,
+                                childID,
+                                phoneNumberController.text,
+                              ),
                             ),
                           ],
                         ),
@@ -202,6 +252,8 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
         },
       );
     }
+
+    
 
     return Scaffold(
       body: SafeArea(
@@ -230,7 +282,8 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                                 width: screenWidth * 0.12,
                                 height: screenHeight * 0.05,
                                 icon: Icons.local_phone_rounded,
-                                onPressed: () => openAddNewNumber(childrenList[index].id),
+                                onPressed: () =>
+                                    openAddNewNumber(childrenList[index].id),
                               ),
                             ],
                           ),
