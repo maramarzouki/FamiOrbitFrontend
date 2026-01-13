@@ -6,6 +6,7 @@ import 'package:fami_orbit/core/validators/validators.dart';
 import 'package:fami_orbit/core/widgets/custom_button.dart';
 import 'package:fami_orbit/core/widgets/custom_input.dart';
 import 'package:fami_orbit/core/widgets/custom_list_view.dart';
+import 'package:fami_orbit/features/parent_space/presentation/screens/child_details.dart';
 import 'package:fami_orbit/features/parent_space/presentation/widgets/child_card.dart';
 import 'package:flutter/material.dart';
 
@@ -67,52 +68,52 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
     });
     debugPrint('children list $childrenList');
   }
-  
+
   void showOTPDialog(childID, phoneNumber) {
-      final TextEditingController otpController = TextEditingController();
-      showDialog(
-        context: context,
-        builder: (context) => Dialog(
-          child: StatefulBuilder(
-            builder: (dialogContext, setDialogState) {
-              return Container(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Enter OTP sent to $phoneNumber'),
-                    CustomInput(
-                      label: "OTP",
-                      controller: otpController,
-                      textInputType: TextInputType.number,
-                      maxLines: 1,
-                    ),
-                    CustomButton(
-                      text: "Verify",
-                      onPressed: () async {
-                        try {
-                          await ChildService.verifyPhoneNumber(
-                            childID,
-                            phoneNumber,
-                            otpController.text,
-                          );
-                          Navigator.pop(context);
-                          getChildrenList(); // Refresh
-                        } catch (e) {
-                          // Show error
-                        }
-                      },
-                      width: double.infinity,
-                      height: 45,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+    final TextEditingController otpController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Enter OTP sent to $phoneNumber'),
+                  CustomInput(
+                    label: "OTP",
+                    controller: otpController,
+                    textInputType: TextInputType.number,
+                    maxLines: 1,
+                  ),
+                  CustomButton(
+                    text: "Verify",
+                    onPressed: () async {
+                      try {
+                        await ChildService.verifyPhoneNumber(
+                          childID,
+                          phoneNumber,
+                          otpController.text,
+                        );
+                        Navigator.pop(context);
+                        getChildrenList(); // Refresh
+                      } catch (e) {
+                        // Show error
+                      }
+                    },
+                    width: double.infinity,
+                    height: 45,
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-      );
-    }
+      ),
+    );
+  }
 
   Future<void> addPhoneNumber(
     StateSetter setDialogState,
@@ -253,8 +254,6 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
       );
     }
 
-    
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -272,10 +271,22 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                             spacing: screenWidth * 0.02,
                             children: [
                               Expanded(
-                                child: ChildCard(
-                                  name: childrenList[index].childUsername,
-                                  location: "location",
-                                  batteryState: "Full",
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ChildDetails(
+                                          childID: childrenList[index].id!,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ChildCard(
+                                    name: childrenList[index].childUsername,
+                                    location: "location",
+                                    batteryState: "Full",
+                                  ),
                                 ),
                               ),
                               CustomButton(

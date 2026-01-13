@@ -107,6 +107,33 @@ class ChildService {
         throw Exception(data['error'] ?? 'Verification failed!');
       }
     } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  static Future<Child> getChildDetails(childID) async {
+    try {
+      var url = Uri.parse('$baseUrl/getChildDetails/$childID');
+      final response = await http.get(
+        url,
+        headers: {'content-type': 'application/json'},
+      );
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      debugPrint('child details response data $data');
+
+      if (response.statusCode == 200) {
+        final childDetails = data['fetchedChild'];
+        return Child.fromJson(childDetails);
+      } else {
+        debugPrint(
+          "error while getting child details (statusCode != 200) : ${data['error']}",
+        );
+        throw Exception(data['error'] ?? 'Getting child details failed!');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
       rethrow;
     }
   }
