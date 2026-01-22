@@ -38,6 +38,16 @@ class _ChildDetailsState extends State<ChildDetails> {
     }
   }
 
+    Future<void> deleteChild() async {
+    try {
+      final result = await ChildService.deletChild(widget.childID);
+      debugPrint("delete child Success: $result");
+      Navigator.pop(context);
+    } catch (e) {
+      debugPrint("Error: ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -125,12 +125,35 @@ class ChildService {
 
       if (response.statusCode == 200) {
         final childDetails = data['fetchedChild'];
-        return Child.fromJson(childDetails);
+        return Child.fromMap(childDetails);
       } else {
         debugPrint(
           "error while getting child details (statusCode != 200) : ${data['error']}",
         );
         throw Exception(data['error'] ?? 'Getting child details failed!');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  static Future<String> deletChild(childID) async {
+    try {
+      var url = Uri.parse('$baseUrl/deleteChild/$childID');
+      final response = await http.delete(
+        url,
+        headers: {'content-type': 'application/json'},
+      );
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "Child removed!";
+      } else {
+        debugPrint(
+          "error while removing child (statusCode != 200) : ${data['error']}",
+        );
+        throw Exception(data['error'] ?? 'Removing child failed!');
       }
     } catch (e) {
       debugPrint(e.toString());
