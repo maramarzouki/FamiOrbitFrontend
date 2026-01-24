@@ -31,8 +31,7 @@ class _ChildDetailsState extends State<ChildDetails> {
       setState(() {
         child = result;
       });
-      debugPrint("add child Success: $child");
-      Navigator.pop(context);
+      debugPrint("child details: $child");
     } catch (e) {
       debugPrint("Error: ${e.toString()}");
     }
@@ -40,7 +39,7 @@ class _ChildDetailsState extends State<ChildDetails> {
 
     Future<void> deleteChild() async {
     try {
-      final result = await ChildService.deletChild(widget.childID);
+      final result = await ChildService.deleteChild(widget.childID);
       debugPrint("delete child Success: $result");
       Navigator.pop(context);
     } catch (e) {
@@ -65,8 +64,8 @@ class _ChildDetailsState extends State<ChildDetails> {
             ),
             CustomButton(
               width: screenWidth * 0.4,
-              height: 0.05,
-              onPressed: () {},
+              height: screenHeight * 0.05,
+              onPressed: () => deleteChild(),
               text: "Delete child",
             ),
           ],

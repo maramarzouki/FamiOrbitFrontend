@@ -138,7 +138,7 @@ class ChildService {
     }
   }
 
-  static Future<String> deletChild(childID) async {
+  static Future<String> deleteChild(childID) async {
     try {
       var url = Uri.parse('$baseUrl/deleteChild/$childID');
       final response = await http.delete(

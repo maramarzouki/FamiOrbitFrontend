@@ -45,8 +45,9 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
     debugPrint("$child");
     if (_addChildFormKey.currentState!.validate()) {
       try {
-        final result = await ChildService.addChild(child);
-        debugPrint("add child Success: $result");
+        // final result = await ChildService.addChild(child);
+        await ChildService.addChild(child).then((_)=>getChildrenList());
+        // debugPrint("add child Success: $result");  
         Navigator.pop(context);
       } catch (e) {
         final errorMsg = e.toString().replaceAll('Exception: ', '');
@@ -280,7 +281,7 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                                           childID: childrenList[index].id!,
                                         ),
                                       ),
-                                    );
+                                    ).then((_)=>getChildrenList());
                                   },
                                   child: ChildCard(
                                     name: childrenList[index].childUsername,
@@ -290,11 +291,13 @@ class _ParentSpaceHomescreenState extends State<ParentSpaceHomescreen> {
                                 ),
                               ),
                               CustomButton(
-                                width: screenWidth * 0.12,
+                                width: screenWidth * 0.1,
                                 height: screenHeight * 0.05,
                                 icon: Icons.local_phone_rounded,
                                 onPressed: () =>
                                     openAddNewNumber(childrenList[index].id),
+                                    iconSize: screenWidth * 0.05,
+                                  customPadding: EdgeInsets.zero,
                               ),
                             ],
                           ),
